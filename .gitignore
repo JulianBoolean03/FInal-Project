@@ -1,0 +1,12 @@
+# SQLite Database (will be auto-created)
+*.db
+
+# Backup files
+*_backup.php
+
+# macOS
+.DS_Store
+
+# IDE
+.vscode/
+.idea/
