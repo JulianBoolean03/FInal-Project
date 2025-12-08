@@ -1,5 +1,5 @@
 # SQLite Database (will be auto-created)
-*.db
+#*.db
 
 # Backup files
 *_backup.php
