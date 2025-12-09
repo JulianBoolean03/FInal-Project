@@ -8,9 +8,6 @@ require_once 'includes/config.php';
 require_once 'includes/db.php';
 require_once 'includes/auth.php';
 
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
-
 startSession();
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
@@ -76,8 +73,10 @@ if ($stmt) {
     );
     
     // Registration successful
-    die("Registration successful! User ID: $userId. Now try logging in with username: $username");
+    header('Location: index.php?success=registered');
+    exit();
 } else {
-    die("Failed to insert user into database");
+    header('Location: index.php?error=registration_failed');
+    exit();
 }
 ?>

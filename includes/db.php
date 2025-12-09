@@ -20,7 +20,7 @@ function getDB()
       initializeTables($connection);
     } catch (PDOException $e) {
       error_log("Database connection failed: " . $e->getMessage());
-      die("Database connection failed: " . $e->getMessage() . "<br>DB Path: " . $dbPath);
+      die("Database connection failed.");
     }
   }
 
@@ -43,13 +43,23 @@ function executeQuery($query, $types = '', $params = [])
 
 function initializeTables($db)
 {
-  $schema = file_get_contents(__DIR__ . '/../schema_sqlite.sql');
-  if ($schema) {
-    try {
-      $db->exec($schema);
-    } catch (PDOException $e) {
-      // Tables might already exist
-    }
+  $schemaPath = __DIR__ . '/../schema_sqlite.sql';
+  
+  if (!file_exists($schemaPath)) {
+    return; // Schema doesn't exist, skip
+  }
+  
+  $schema = file_get_contents($schemaPath);
+  
+  if (!$schema) {
+    return; // Can't read schema, skip
+  }
+  
+  try {
+    $db->exec($schema);
+  } catch (PDOException $e) {
+    // Tables might already exist, ignore error
+    error_log("Schema execution: " . $e->getMessage());
   }
 }
 

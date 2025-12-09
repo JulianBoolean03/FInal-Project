@@ -8,9 +8,6 @@ require_once 'includes/config.php';
 require_once 'includes/db.php';
 require_once 'includes/auth.php';
 
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
-
 startSession();
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
@@ -30,18 +27,16 @@ $stmt = executeQuery(
 );
 
 if (!$stmt) {
-    die("Database query failed");
+    header('Location: index.php?error=invalid_credentials');
+    exit();
 }
 
 $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
-if (!$user) {
-    die("User not found: " . htmlspecialchars($username));
-}
-
-// Verify password is correct
-if (!password_verify($password, $user['password_hash'])) {
-    die("Password verification failed");
+// Verify user exists and password is correct
+if (!$user || !password_verify($password, $user['password_hash'])) {
+    header('Location: index.php?error=invalid_credentials');
+    exit();
 }
 
 // Login successful - create session
