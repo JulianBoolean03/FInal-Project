@@ -28,7 +28,7 @@ $stmt = executeQuery(
      WHERE g.room_id = ? 
      ORDER BY g.id DESC 
      LIMIT 1",
-    'i',
+    '',
     [$roomId]
 );
 
@@ -36,9 +36,9 @@ $game = null;
 $story = null;
 
 if ($stmt) {
-    $result = $stmt->get_result();
-    $data = $result->fetch_assoc();
-    $stmt->close();
+    
+    $data = $stmt->fetch(PDO::FETCH_ASSOC);
+    
     
     if ($data) {
         $game = $data;

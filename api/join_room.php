@@ -19,8 +19,8 @@ $action = $input['action'] ?? 'join';
 // Handle leave action
 if ($action === 'leave') {
     $stmt = executeQuery(
-        "DELETE FROM room_players WHERE user_id = ?",
-        'i',
+    "DELETE FROM room_players WHERE user_id = ?",
+    '',
         [$userId]
     );
     
@@ -47,48 +47,48 @@ if ($type === 'public') {
     );
     
     if ($stmt) {
-        $result = $stmt->get_result();
-        if ($row = $result->fetch_assoc()) {
+        
+        if ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
             $roomId = $row['id'];
         }
-        $stmt->close();
+        
     }
     
     // Create new public room if none available
     if (!$roomId) {
         do {
             $newCode = generateRoomCode(6);
-            $checkStmt = executeQuery("SELECT id FROM rooms WHERE code = ?", 's', [$newCode]);
+            $checkStmt = executeQuery("SELECT id FROM rooms WHERE code = ?", '', [$newCode]);
             $result = $checkStmt ? $checkStmt->get_result() : null;
-            $exists = $result && $result->num_rows > 0;
+            $exists = $result && $stmt->rowCount() > 0;
             if ($checkStmt) $checkStmt->close();
         } while ($exists);
         
         $stmt = executeQuery(
-            "INSERT INTO rooms (code, is_private, host_user_id, max_players) VALUES (?, 0, ?, ?)",
-            'sii',
+    "INSERT INTO rooms (code, is_private, host_user_id, max_players) VALUES (?, 0, ?, ?)",
+    '',
             [$newCode, $userId, MAX_PLAYERS_PER_ROOM]
         );
         
         if ($stmt) {
-            $roomId = $stmt->insert_id;
-            $stmt->close();
+            $roomId = getDB()->lastInsertId();
+            
         }
     }
 } elseif ($type === 'private' && $code) {
     // Join private room by code
     $stmt = executeQuery(
-        "SELECT id FROM rooms WHERE code = ? AND is_private = 1 AND status = 'waiting'",
-        's',
+    "SELECT id FROM rooms WHERE code = ? AND is_private = 1 AND status = 'waiting'",
+    '',
         [$code]
     );
     
     if ($stmt) {
-        $result = $stmt->get_result();
-        if ($row = $result->fetch_assoc()) {
+        
+        if ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
             $roomId = $row['id'];
         }
-        $stmt->close();
+        
     }
     
     if (!$roomId) {
@@ -98,17 +98,17 @@ if ($type === 'public') {
 } elseif ($roomId) {
     // Join specific room by ID
     $stmt = executeQuery(
-        "SELECT id FROM rooms WHERE id = ? AND status = 'waiting'",
-        'i',
+    "SELECT id FROM rooms WHERE id = ? AND status = 'waiting'",
+    '',
         [$roomId]
     );
     
     if ($stmt) {
-        $result = $stmt->get_result();
-        if (!$result->fetch_assoc()) {
+        
+        if (!$stmt->fetch(PDO::FETCH_ASSOC)) {
             $roomId = null;
         }
-        $stmt->close();
+        
     }
 }
 
@@ -124,56 +124,56 @@ $stmt = executeQuery(
      LEFT JOIN room_players rp ON r.id = rp.room_id
      WHERE r.id = ?
      GROUP BY r.id",
-    'i',
+    '',
     [$roomId]
 );
 
 if ($stmt) {
-    $result = $stmt->get_result();
-    if ($row = $result->fetch_assoc()) {
+    
+    if ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
         if ($row['player_count'] >= $row['max_players']) {
             echo json_encode(['success' => false, 'message' => 'Room is full']);
             exit();
         }
     }
-    $stmt->close();
+    
 }
 
 // Check if already in room
 $stmt = executeQuery(
     "SELECT id FROM room_players WHERE user_id = ? AND room_id = ?",
-    'ii',
+    '',
     [$userId, $roomId]
 );
 
 $alreadyInRoom = false;
 if ($stmt) {
-    $result = $stmt->get_result();
-    $alreadyInRoom = $result->num_rows > 0;
-    $stmt->close();
+    
+    $alreadyInRoom = $stmt->rowCount() > 0;
+    
 }
 
 if (!$alreadyInRoom) {
     // Check if first player (make host)
     $stmt = executeQuery(
-        "SELECT COUNT(*) as count FROM room_players WHERE room_id = ?",
-        'i',
+    "SELECT COUNT(*) as count FROM room_players WHERE room_id = ?",
+    '',
         [$roomId]
     );
     
     $isHost = 0;
     if ($stmt) {
-        $result = $stmt->get_result();
-        if ($row = $result->fetch_assoc()) {
+        
+        if ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
             $isHost = ($row['count'] == 0) ? 1 : 0;
         }
-        $stmt->close();
+        
     }
     
     // Add player to room
     $stmt = executeQuery(
-        "INSERT INTO room_players (room_id, user_id, is_host) VALUES (?, ?, ?)",
-        'iii',
+    "INSERT INTO room_players (room_id, user_id, is_host) VALUES (?, ?, ?)",
+    '',
         [$roomId, $userId, $isHost]
     );
     

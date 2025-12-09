@@ -8,6 +8,9 @@ require_once 'includes/config.php';
 require_once 'includes/db.php';
 require_once 'includes/auth.php';
 
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
 startSession();
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
@@ -22,23 +25,23 @@ $remember = isset($_POST['remember']) && $_POST['remember'] == '1';
 // Fetch user from database
 $stmt = executeQuery(
     "SELECT id, username, password_hash FROM users WHERE username = ?",
-    's',
+    '',
     [$username]
 );
 
 if (!$stmt) {
-    header('Location: index.php?error=invalid_credentials');
-    exit();
+    die("Database query failed");
 }
 
-$result = $stmt->get_result();
-$user = $result->fetch_assoc();
-$stmt->close();
+$user = $stmt->fetch(PDO::FETCH_ASSOC);
 
-// Verify user exists and password is correct
-if (!$user || !password_verify($password, $user['password_hash'])) {
-    header('Location: index.php?error=invalid_credentials');
-    exit();
+if (!$user) {
+    die("User not found: " . htmlspecialchars($username));
+}
+
+// Verify password is correct
+if (!password_verify($password, $user['password_hash'])) {
+    die("Password verification failed");
 }
 
 // Login successful - create session

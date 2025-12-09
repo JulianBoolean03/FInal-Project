@@ -25,7 +25,7 @@ $stmt = executeQuery(
      JOIN users u ON m.user_id = u.id
      WHERE m.game_id = ?
      ORDER BY m.finished DESC, m.finished_at ASC, m.time_ms ASC",
-    'i',
+    '',
     [$gameId]
 );
 
@@ -33,8 +33,8 @@ $players = [];
 $leaderboard = [];
 
 if ($stmt) {
-    $result = $stmt->get_result();
-    while ($row = $result->fetch_assoc()) {
+    
+    while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
         $players[] = [
             'user_id' => $row['id'],
             'username' => $row['username'],
@@ -48,7 +48,7 @@ if ($stmt) {
             'finished' => (bool)$row['finished']
         ];
     }
-    $stmt->close();
+    
 }
 
 echo json_encode([

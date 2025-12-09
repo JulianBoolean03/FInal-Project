@@ -113,16 +113,16 @@ function logoutUser() {
  */
 function isRoomHost($userId, $roomId) {
     $stmt = executeQuery(
-        "SELECT is_host FROM room_players WHERE user_id = ? AND room_id = ?",
-        'ii',
+    "SELECT is_host FROM room_players WHERE user_id = ? AND room_id = ?",
+    '',
         [$userId, $roomId]
     );
     
     if (!$stmt) return false;
     
-    $result = $stmt->get_result();
-    $row = $result->fetch_assoc();
-    $stmt->close();
+    
+    $row = $stmt->fetch(PDO::FETCH_ASSOC);
+    
     
     return $row && $row['is_host'] == 1;
 }
@@ -135,16 +135,16 @@ function isRoomHost($userId, $roomId) {
  */
 function isInRoom($userId, $roomId) {
     $stmt = executeQuery(
-        "SELECT id FROM room_players WHERE user_id = ? AND room_id = ?",
-        'ii',
+    "SELECT id FROM room_players WHERE user_id = ? AND room_id = ?",
+    '',
         [$userId, $roomId]
     );
     
     if (!$stmt) return false;
     
-    $result = $stmt->get_result();
-    $exists = $result->num_rows > 0;
-    $stmt->close();
+    
+    $exists = $stmt->rowCount() > 0;
+    
     
     return $exists;
 }
@@ -156,8 +156,8 @@ function isInRoom($userId, $roomId) {
  */
 function updateLastActive($userId, $roomId) {
     executeQuery(
-        "UPDATE room_players SET last_active_at = NOW() WHERE user_id = ? AND room_id = ?",
-        'ii',
+    "UPDATE room_players SET last_active_at = NOW() WHERE user_id = ? AND room_id = ?",
+    '',
         [$userId, $roomId]
     );
 }
@@ -169,16 +169,16 @@ function updateLastActive($userId, $roomId) {
  */
 function getCurrentRoomId($userId) {
     $stmt = executeQuery(
-        "SELECT room_id FROM room_players WHERE user_id = ? ORDER BY joined_at DESC LIMIT 1",
-        'i',
+    "SELECT room_id FROM room_players WHERE user_id = ? ORDER BY joined_at DESC LIMIT 1",
+    '',
         [$userId]
     );
     
     if (!$stmt) return null;
     
-    $result = $stmt->get_result();
-    $row = $result->fetch_assoc();
-    $stmt->close();
+    
+    $row = $stmt->fetch(PDO::FETCH_ASSOC);
+    
     
     return $row ? $row['room_id'] : null;
 }

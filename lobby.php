@@ -18,15 +18,15 @@ $currentRoomId = getCurrentRoomId($userId);
 if ($currentRoomId) {
     // Check room status
     $stmt = executeQuery(
-        "SELECT status FROM rooms WHERE id = ?",
-        'i',
+    "SELECT status FROM rooms WHERE id = ?",
+    '',
         [$currentRoomId]
     );
     
     if ($stmt) {
-        $result = $stmt->get_result();
-        $room = $result->fetch_assoc();
-        $stmt->close();
+        
+        $room = $stmt->fetch(PDO::FETCH_ASSOC);
+        
         
         if ($room) {
             // Don't auto-redirect, let JavaScript handle it to avoid loops

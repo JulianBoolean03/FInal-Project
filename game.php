@@ -25,7 +25,7 @@ updateLastActive($userId, $roomId);
 // Get current game ID
 $stmt = executeQuery(
     "SELECT id, round_number FROM games WHERE room_id = ? ORDER BY id DESC LIMIT 1",
-    'i',
+    '',
     [$roomId]
 );
 
@@ -33,12 +33,12 @@ $gameId = null;
 $roundNumber = 1;
 
 if ($stmt) {
-    $result = $stmt->get_result();
-    if ($row = $result->fetch_assoc()) {
+    
+    if ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
         $gameId = $row['id'];
         $roundNumber = $row['round_number'];
     }
-    $stmt->close();
+    
 }
 ?>
 <!DOCTYPE html>

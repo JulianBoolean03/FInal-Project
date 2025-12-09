@@ -8,6 +8,9 @@ require_once 'includes/config.php';
 require_once 'includes/db.php';
 require_once 'includes/auth.php';
 
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
 startSession();
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
@@ -40,18 +43,15 @@ if ($password !== $password_confirm) {
 // Check if username already exists
 $stmt = executeQuery(
     "SELECT id FROM users WHERE username = ?",
-    's',
+    '',
     [$username]
 );
 
 if ($stmt) {
-    $result = $stmt->get_result();
-    if ($result->num_rows > 0) {
-        $stmt->close();
+    if ($stmt->fetch()) {
         header('Location: index.php?error=username_taken');
         exit();
     }
-    $stmt->close();
 }
 
 // Hash password
@@ -60,26 +60,24 @@ $password_hash = password_hash($password, PASSWORD_DEFAULT);
 // Insert new user
 $stmt = executeQuery(
     "INSERT INTO users (username, password_hash) VALUES (?, ?)",
-    'ss',
+    '',
     [$username, $password_hash]
 );
 
 if ($stmt) {
-    $userId = $stmt->insert_id;
-    $stmt->close();
+    $db = getDB();
+    $userId = $db->lastInsertId();
     
     // Create analytics record for new user
     executeQuery(
         "INSERT INTO analytics (user_id) VALUES (?)",
-        'i',
+        '',
         [$userId]
     );
     
     // Registration successful
-    header('Location: index.php?success=registered');
-    exit();
+    die("Registration successful! User ID: $userId. Now try logging in with username: $username");
 } else {
-    header('Location: index.php?error=registration_failed');
-    exit();
+    die("Failed to insert user into database");
 }
 ?>

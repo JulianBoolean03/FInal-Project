@@ -27,7 +27,7 @@ if (!$gameId) {
 $stmt = executeQuery(
     "UPDATE moves SET move_count = ?, time_ms = ?, finished = 1, finished_at = NOW(), powerups_used = ? 
      WHERE game_id = ? AND user_id = ?",
-    'iisii',
+    '',
     [$moveCount, $timeMs, $powerupsUsed, $gameId, $userId]
 );
 
@@ -45,7 +45,7 @@ $stmt = executeQuery(
      best_time_ms = CASE WHEN best_time_ms = 0 OR ? < best_time_ms THEN ? ELSE best_time_ms END,
      total_moves = total_moves + ?
      WHERE user_id = ?",
-    'iiiii',
+    '',
     [$timeMs, $timeMs, $timeMs, $moveCount, $userId]
 );
 
@@ -53,10 +53,10 @@ $stmt = executeQuery(
 $newAchievements = [];
 
 // Get user stats
-$stmt = executeQuery("SELECT puzzles_solved FROM analytics WHERE user_id = ?", 'i', [$userId]);
-$result = $stmt->get_result();
-$stats = $result->fetch_assoc();
-$stmt->close();
+$stmt = executeQuery("SELECT puzzles_solved FROM analytics WHERE user_id = ?", '', [$userId]);
+
+$stats = $stmt->fetch(PDO::FETCH_ASSOC);
+
 
 // First win
 if ($stats['puzzles_solved'] == 1) {
@@ -85,17 +85,17 @@ if ($moveCount < 25) {
 echo json_encode(['success' => true, 'new_achievements' => $newAchievements]);
 
 function awardAchievement($userId, $key) {
-    $stmt = executeQuery("SELECT id FROM achievements WHERE achievement_key = ?", 's', [$key]);
+    $stmt = executeQuery("SELECT id FROM achievements WHERE achievement_key = ?", '', [$key]);
     if (!$stmt) return;
     
-    $result = $stmt->get_result();
-    $achievement = $result->fetch_assoc();
-    $stmt->close();
+    
+    $achievement = $stmt->fetch(PDO::FETCH_ASSOC);
+    
     
     if ($achievement) {
         $stmt = executeQuery(
-            "INSERT IGNORE INTO user_achievements (user_id, achievement_id) VALUES (?, ?)",
-            'ii',
+    "INSERT IGNORE INTO user_achievements (user_id, achievement_id) VALUES (?, ?)",
+    '',
             [$userId, $achievement['id']]
         );
     }

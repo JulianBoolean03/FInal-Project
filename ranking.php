@@ -28,31 +28,31 @@ $stmt = executeQuery(
      JOIN games g ON m.game_id = g.id
      WHERE g.room_id = ? AND g.id = (SELECT MAX(id) FROM games WHERE room_id = ?)
      ORDER BY rank ASC",
-    'ii',
+    '',
     [$roomId, $roomId]
 );
 
 $rankings = [];
 if ($stmt) {
-    $result = $stmt->get_result();
-    while ($row = $result->fetch_assoc()) {
+    
+    while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
         $rankings[] = $row;
     }
-    $stmt->close();
+    
 }
 
 // Get room info
 $stmt = executeQuery(
     "SELECT current_round, status FROM rooms WHERE id = ?",
-    'i',
+    '',
     [$roomId]
 );
 
 $room = null;
 if ($stmt) {
-    $result = $stmt->get_result();
-    $room = $result->fetch_assoc();
-    $stmt->close();
+    
+    $room = $stmt->fetch(PDO::FETCH_ASSOC);
+    
 }
 ?>
 <!DOCTYPE html>

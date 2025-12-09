@@ -19,16 +19,16 @@ $isPrivate = isset($input['is_private']) && $input['is_private'] ? 1 : 0;
 // Generate unique room code
 do {
     $code = generateRoomCode(6);
-    $stmt = executeQuery("SELECT id FROM rooms WHERE code = ?", 's', [$code]);
+    $stmt = executeQuery("SELECT id FROM rooms WHERE code = ?", '', [$code]);
     $result = $stmt ? $stmt->get_result() : null;
-    $exists = $result && $result->num_rows > 0;
-    if ($stmt) $stmt->close();
+    $exists = $result && $stmt->rowCount() > 0;
+    if ($stmt) 
 } while ($exists);
 
 // Create room
 $stmt = executeQuery(
     "INSERT INTO rooms (code, is_private, host_user_id, max_players) VALUES (?, ?, ?, ?)",
-    'siii',
+    '',
     [$code, $isPrivate, $userId, MAX_PLAYERS_PER_ROOM]
 );
 
@@ -37,13 +37,13 @@ if (!$stmt) {
     exit();
 }
 
-$roomId = $stmt->insert_id;
-$stmt->close();
+$roomId = getDB()->lastInsertId();
+
 
 // Add host to room
 $stmt = executeQuery(
     "INSERT INTO room_players (room_id, user_id, is_host) VALUES (?, ?, 1)",
-    'ii',
+    '',
     [$roomId, $userId]
 );
 

@@ -28,7 +28,7 @@ if (empty($message) || strlen($message) > 200) {
 
 $stmt = executeQuery(
     "INSERT INTO chat_messages (room_id, user_id, message) VALUES (?, ?, ?)",
-    'iis',
+    '',
     [$roomId, $userId, $message]
 );
 
@@ -37,5 +37,5 @@ if (!$stmt) {
     exit();
 }
 
-echo json_encode(['success' => true, 'message_id' => $stmt->insert_id]);
+echo json_encode(['success' => true, 'message_id' => getDB()->lastInsertId()]);
 ?>

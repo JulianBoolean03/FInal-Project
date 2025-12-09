@@ -23,18 +23,18 @@ if (isset($_COOKIE['remember_user']) && !isLoggedIn()) {
     // Verify user exists
     $stmt = executeQuery(
         "SELECT id, username FROM users WHERE username = ?",
-        's',
+        '',
         [$username]
     );
     
     if ($stmt) {
-        $result = $stmt->get_result();
-        if ($row = $result->fetch_assoc()) {
+        
+        if ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
             loginUser($row['id'], $row['username'], true);
             header('Location: lobby.php');
             exit();
         }
-        $stmt->close();
+        
     }
 }
 

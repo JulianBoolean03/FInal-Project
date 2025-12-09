@@ -26,14 +26,14 @@ $stmt = executeQuery(
      WHERE cm.room_id = ?
      ORDER BY cm.created_at DESC
      LIMIT 50",
-    'i',
+    '',
     [$roomId]
 );
 
 $messages = [];
 if ($stmt) {
-    $result = $stmt->get_result();
-    while ($row = $result->fetch_assoc()) {
+    
+    while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
         $messages[] = [
             'id' => $row['id'],
             'username' => $row['username'],
@@ -41,7 +41,7 @@ if ($stmt) {
             'time' => date('g:i A', strtotime($row['created_at']))
         ];
     }
-    $stmt->close();
+    
 }
 
 echo json_encode(['success' => true, 'messages' => array_reverse($messages)]);

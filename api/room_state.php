@@ -32,11 +32,11 @@ if ($action === 'list_public') {
     
     $rooms = [];
     if ($stmt) {
-        $result = $stmt->get_result();
-        while ($row = $result->fetch_assoc()) {
+        
+        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
             $rooms[] = $row;
         }
-        $stmt->close();
+        
     }
     
     echo json_encode(['success' => true, 'rooms' => $rooms]);
@@ -55,7 +55,7 @@ $stmt = executeQuery(
             (SELECT is_host FROM room_players WHERE room_id = r.id AND user_id = ?) as is_host
      FROM rooms r
      WHERE r.id = ?",
-    'ii',
+    '',
     [$userId, $roomId]
 );
 
@@ -64,9 +64,9 @@ if (!$stmt) {
     exit();
 }
 
-$result = $stmt->get_result();
-$room = $result->fetch_assoc();
-$stmt->close();
+
+$room = $stmt->fetch(PDO::FETCH_ASSOC);
+
 
 if (!$room) {
     echo json_encode(['success' => false, 'message' => 'Room not found']);
@@ -80,17 +80,17 @@ $stmt = executeQuery(
      JOIN users u ON rp.user_id = u.id
      WHERE rp.room_id = ?
      ORDER BY rp.is_host DESC, rp.joined_at ASC",
-    'i',
+    '',
     [$roomId]
 );
 
 $players = [];
 if ($stmt) {
-    $result = $stmt->get_result();
-    while ($row = $result->fetch_assoc()) {
+    
+    while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
         $players[] = $row;
     }
-    $stmt->close();
+    
 }
 
 $room['players'] = $players;

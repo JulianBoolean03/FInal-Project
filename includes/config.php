@@ -7,8 +7,8 @@
 
 // Database configuration
 define('DB_HOST', 'localhost');
-define('DB_USER', 'root');
-define('DB_PASS', '123');
+define('DB_USER', 'jrobinson262');  // Your codd username
+define('DB_PASS', 'your_mysql_password');  // Your MySQL password on codd
 define('DB_NAME', 'reindeer_games');
 
 // Application settings
