@@ -65,17 +65,26 @@ if ($stmt) {
     $db = getDB();
     $userId = $db->lastInsertId();
     
-    // Create analytics record for new user
-    executeQuery(
-        "INSERT INTO analytics (user_id) VALUES (?)",
-        '',
-        [$userId]
-    );
-    
-    // Registration successful
-    header('Location: index.php?success=registered');
-    exit();
+    // Verify user was created
+    if ($userId > 0) {
+        // Create analytics record for new user
+        executeQuery(
+            "INSERT INTO analytics (user_id) VALUES (?)",
+            '',
+            [$userId]
+        );
+        
+        // Registration successful
+        error_log("User registered successfully: $username (ID: $userId)");
+        header('Location: index.php?success=registered');
+        exit();
+    } else {
+        error_log("User insert failed - no ID returned");
+        header('Location: index.php?error=registration_failed');
+        exit();
+    }
 } else {
+    error_log("User insert failed - query returned false");
     header('Location: index.php?error=registration_failed');
     exit();
 }

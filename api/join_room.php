@@ -59,9 +59,7 @@ if ($type === 'public') {
         do {
             $newCode = generateRoomCode(6);
             $checkStmt = executeQuery("SELECT id FROM rooms WHERE code = ?", '', [$newCode]);
-            $result = $checkStmt ? $checkStmt->get_result() : null;
-            $exists = $result && $stmt->rowCount() > 0;
-            if ($checkStmt) $checkStmt->close();
+            $exists = $checkStmt && $checkStmt->fetch();
         } while ($exists);
         
         $stmt = executeQuery(
@@ -148,9 +146,7 @@ $stmt = executeQuery(
 
 $alreadyInRoom = false;
 if ($stmt) {
-    
-    $alreadyInRoom = $stmt->rowCount() > 0;
-    
+    $alreadyInRoom = $stmt->fetch() !== false;
 }
 
 if (!$alreadyInRoom) {

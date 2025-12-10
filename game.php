@@ -14,7 +14,18 @@ $userId = getCurrentUserId();
 $username = getCurrentUsername();
 $roomId = $_GET['room_id'] ?? null;
 
-if (!$roomId || !isInRoom($userId, $roomId)) {
+error_log("Game.php: User $userId trying to access room $roomId");
+
+if (!$roomId) {
+    error_log("Game.php: No room ID provided, redirecting to lobby");
+    header('Location: lobby.php');
+    exit();
+}
+
+// Check if room exists
+$stmt = executeQuery("SELECT id FROM rooms WHERE id = ?", '', [$roomId]);
+if (!$stmt || !$stmt->fetch()) {
+    error_log("Game.php: Room $roomId not found, redirecting to lobby");
     header('Location: lobby.php');
     exit();
 }
@@ -33,12 +44,42 @@ $gameId = null;
 $roundNumber = 1;
 
 if ($stmt) {
-    
     if ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
         $gameId = $row['id'];
         $roundNumber = $row['round_number'];
     }
+}
+
+// If no game exists yet, check room status
+if (!$gameId) {
+    $stmt = executeQuery("SELECT status FROM rooms WHERE id = ?", '', [$roomId]);
+    $room = $stmt ? $stmt->fetch(PDO::FETCH_ASSOC) : null;
     
+    // If room is starting or in_progress, wait for game record to be created
+    if ($room && ($room['status'] === 'starting' || $room['status'] === 'in_progress')) {
+        // Wait up to 5 seconds for game to be created
+        $attempts = 0;
+        while (!$gameId && $attempts < 10) {
+            usleep(500000); // 0.5 seconds
+            $stmt = executeQuery(
+                "SELECT id, round_number FROM games WHERE room_id = ? ORDER BY id DESC LIMIT 1",
+                '',
+                [$roomId]
+            );
+            if ($stmt && ($row = $stmt->fetch(PDO::FETCH_ASSOC))) {
+                $gameId = $row['id'];
+                $roundNumber = $row['round_number'];
+                break;
+            }
+            $attempts++;
+        }
+    }
+    
+    // If still no game, redirect back to lobby
+    if (!$gameId) {
+        header('Location: lobby.php');
+        exit();
+    }
 }
 ?>
 <!DOCTYPE html>
@@ -50,6 +91,39 @@ if ($stmt) {
     <link rel="stylesheet" href="assets/css/styles.css">
 </head>
 <body class="theme-classic">
+    <?php if ($waitingForGame): ?>
+    <!-- Loading Screen -->
+    <div style="display: flex; align-items: center; justify-content: center; height: 100vh; flex-direction: column;">
+        <h1>🎄 Game Starting... 🎄</h1>
+        <p>Preparing the puzzle board...</p>
+        <div class="spinner" style="border: 4px solid #f3f3f3; border-top: 4px solid #3498db; border-radius: 50%; width: 50px; height: 50px; animation: spin 1s linear infinite;"></div>
+    </div>
+    <style>
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+    <script>
+        // Poll every 500ms and reload when game is ready
+        let attempts = 0;
+        const checkGame = setInterval(() => {
+            fetch('api/room_state.php?room_id=<?php echo $roomId; ?>')
+                .then(r => r.json())
+                .then(data => {
+                    attempts++;
+                    if (attempts > 20) {
+                        clearInterval(checkGame);
+                        alert('Game failed to start. Returning to lobby.');
+                        window.location.href = 'lobby.php';
+                    }
+                    // Reload the page - if game exists now, it will load normally
+                    console.log('Checking game...', attempts);
+                    window.location.reload();
+                });
+        }, 500);
+    </script>
+    <?php exit(); endif; ?>
     <nav class="top-nav">
         <div class="nav-left">
             <h1 class="nav-title">Reindeer Games - Round <?php echo $roundNumber; ?></h1>

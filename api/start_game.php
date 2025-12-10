@@ -29,10 +29,14 @@ if (!isRoomHost($userId, $roomId)) {
 // Get room info
 $stmt = executeQuery("SELECT current_round, status FROM rooms WHERE id = ?", '', [$roomId]);
 
+if (!$stmt) {
+    echo json_encode(['success' => false, 'message' => 'Room not found']);
+    exit();
+}
+
 $room = $stmt->fetch(PDO::FETCH_ASSOC);
 
-
-if ($room['status'] !== 'waiting') {
+if (!$room || $room['status'] !== 'waiting') {
     echo json_encode(['success' => false, 'message' => 'Game already started']);
     exit();
 }

@@ -27,13 +27,21 @@ const Lobby = {
         this.loadRoomInfo(roomId);
         
         // Poll current room state
+        let redirecting = false;
         this.roomPoller = new Poller(`api/room_state.php?room_id=${roomId}`, (data) => {
             if (data.success && data.room) {
                 this.displayCurrentRoom(data.room);
                 
-                // Redirect if game is starting
-                if (data.room.status === 'in_progress') {
-                    window.location.href = `game.php?room_id=${roomId}`;
+                // Redirect if game is starting (but only once)
+                if (!redirecting && (data.room.status === 'in_progress' || data.room.status === 'starting')) {
+                    redirecting = true;
+                    console.log('Game starting, redirecting to game page...');
+                    this.roomPoller.stop();
+                    // Delay to ensure game record is created
+                    setTimeout(() => {
+                        console.log('Redirecting now...');
+                        window.location.href = `game.php?room_id=${roomId}`;
+                    }, 1500);
                 }
             }
         }, 2000);
@@ -41,14 +49,28 @@ const Lobby = {
     },
     
     setupEventListeners: function() {
+        console.log('Setting up event listeners...');
+        
         const joinPublicBtn = document.getElementById('join-public-btn');
         if (joinPublicBtn) {
-            joinPublicBtn.addEventListener('click', () => this.joinPublicRoom());
+            console.log('Join public button found');
+            joinPublicBtn.addEventListener('click', () => {
+                console.log('Join public clicked');
+                this.joinPublicRoom();
+            });
+        } else {
+            console.log('Join public button NOT found');
         }
         
         const createPrivateBtn = document.getElementById('create-private-btn');
         if (createPrivateBtn) {
-            createPrivateBtn.addEventListener('click', () => this.createPrivateRoom());
+            console.log('Create private button found');
+            createPrivateBtn.addEventListener('click', () => {
+                console.log('Create private clicked');
+                this.createPrivateRoom();
+            });
+        } else {
+            console.log('Create private button NOT found');
         }
         
         const joinPrivateForm = document.getElementById('join-private-form');
@@ -67,21 +89,36 @@ const Lobby = {
     },
     
     async joinPublicRoom() {
+        console.log('joinPublicRoom called');
+        showToast('Joining public room...', 'info');
+        
         const result = await API.post('api/join_room.php', { type: 'public' });
+        console.log('Join public result:', result);
+        
         if (result.success) {
-            window.location.href = `lobby.php`;
+            showToast('Joined room!', 'success');
+            setTimeout(() => {
+                window.location.href = `lobby.php`;
+            }, 500);
         } else {
-            showToast(result.message || 'Failed to join room', 'error');
+            showToast(result.message || result.error || 'Failed to join room', 'error');
         }
     },
     
     async createPrivateRoom() {
+        console.log('createPrivateRoom called');
+        showToast('Creating private room...', 'info');
+        
         const result = await API.post('api/create_room.php', { is_private: true });
+        console.log('Create room result:', result);
+        
         if (result.success) {
             showToast(`Room created! Code: ${result.code}`, 'success');
-            window.location.href = `lobby.php`;
+            setTimeout(() => {
+                window.location.href = `lobby.php`;
+            }, 1000);
         } else {
-            showToast(result.message || 'Failed to create room', 'error');
+            showToast(result.message || result.error || 'Failed to create room', 'error');
         }
     },
     
@@ -180,9 +217,20 @@ const Lobby = {
     },
     
     async startGame(roomId) {
+        console.log('Starting game for room', roomId);
         const result = await API.post('api/start_game.php', { room_id: roomId });
+        console.log('Start game result:', result);
+        
         if (result.success) {
-            window.location.href = `game.php?room_id=${roomId}`;
+            if (this.roomPoller) {
+                this.roomPoller.stop();
+            }
+            // Redirect immediately for host, others will follow via polling
+            showToast('Starting game...', 'success');
+            console.log('Redirecting host to game...');
+            setTimeout(() => {
+                window.location.href = `game.php?room_id=${roomId}`;
+            }, 2000);
         } else {
             showToast(result.message || 'Failed to start game', 'error');
         }

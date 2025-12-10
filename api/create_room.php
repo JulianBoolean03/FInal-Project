@@ -20,9 +20,7 @@ $isPrivate = isset($input['is_private']) && $input['is_private'] ? 1 : 0;
 do {
     $code = generateRoomCode(6);
     $stmt = executeQuery("SELECT id FROM rooms WHERE code = ?", '', [$code]);
-    $result = $stmt ? $stmt->get_result() : null;
-    $exists = $result && $stmt->rowCount() > 0;
-    if ($stmt) 
+    $exists = $stmt && $stmt->fetch();
 } while ($exists);
 
 // Create room

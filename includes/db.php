@@ -13,6 +13,22 @@ function getDB()
   if ($connection === null) {
     try {
       $dbPath = __DIR__ . '/../reindeer_games.db';
+      
+      // Check if database file exists and is writable
+      if (!file_exists($dbPath)) {
+        // Try to create it
+        if (!touch($dbPath)) {
+          error_log("Cannot create database file: $dbPath");
+          die("<h2>Database Setup Required</h2><p>Cannot create database file. Please run setup_db.php or check directory permissions.</p>");
+        }
+        chmod($dbPath, 0666);
+      }
+      
+      if (!is_readable($dbPath) || !is_writable($dbPath)) {
+        error_log("Database file permissions error: $dbPath");
+        die("<h2>Permission Error</h2><p>Database file exists but is not readable/writable. Run: chmod 666 reindeer_games.db</p>");
+      }
+      
       $connection = new PDO('sqlite:' . $dbPath);
       $connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
@@ -20,7 +36,7 @@ function getDB()
       initializeTables($connection);
     } catch (PDOException $e) {
       error_log("Database connection failed: " . $e->getMessage());
-      die("Database connection failed.");
+      die("<h2>Database Error</h2><p>" . htmlspecialchars($e->getMessage()) . "</p><p>Please run setup_db.php to initialize the database.</p>");
     }
   }
 

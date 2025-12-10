@@ -13,6 +13,9 @@ requireAuth();
 $userId = getCurrentUserId();
 $username = getCurrentUsername();
 
+// Clean up quick match waiting flag
+executeQuery("UPDATE analytics SET best_time_ms = 0 WHERE user_id = ? AND best_time_ms = 999999999", '', [$userId]);
+
 // Check if user is already in a room
 $currentRoomId = getCurrentRoomId($userId);
 if ($currentRoomId) {
@@ -73,7 +76,7 @@ $success = $_GET['success'] ?? '';
             <div class="current-room-panel card">
                 <h2>Current Room</h2>
                 <div id="current-room-info"></div>
-                <button id="leave-room-btn" class="btn btn-danger">Leave Room</button>
+                <a href="leave_room.php" class="btn btn-danger">Leave Room</a>
             </div>
         <?php else: ?>
             <!-- Join/Create Room Options -->
@@ -85,9 +88,9 @@ $success = $_GET['success'] ?? '';
                 </div>
                 
                 <div class="card option-card">
-                    <h2>Join Public Room</h2>
-                    <p>Jump into a game with other players</p>
-                    <button id="join-public-btn" class="btn btn-primary btn-large">Join Public Game</button>
+                    <h2>Quick Match</h2>
+                    <p>Jump into a game with another player</p>
+                    <a href="quick_match.php" class="btn btn-primary btn-large" style="text-decoration: none;">Find Match</a>
                 </div>
                 
                 <div class="card option-card">

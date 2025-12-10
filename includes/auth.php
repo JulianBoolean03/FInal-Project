@@ -142,11 +142,10 @@ function isInRoom($userId, $roomId) {
     
     if (!$stmt) return false;
     
+    // Use fetch() instead of rowCount() for SQLite compatibility
+    $row = $stmt->fetch(PDO::FETCH_ASSOC);
     
-    $exists = $stmt->rowCount() > 0;
-    
-    
-    return $exists;
+    return $row !== false;
 }
 
 /**
@@ -156,7 +155,7 @@ function isInRoom($userId, $roomId) {
  */
 function updateLastActive($userId, $roomId) {
     executeQuery(
-    "UPDATE room_players SET last_active_at = NOW() WHERE user_id = ? AND room_id = ?",
+    "UPDATE room_players SET last_active_at = CURRENT_TIMESTAMP WHERE user_id = ? AND room_id = ?",
     '',
         [$userId, $roomId]
     );

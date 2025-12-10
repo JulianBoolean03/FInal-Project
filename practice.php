@@ -12,6 +12,11 @@ requireAuth();
 
 $userId = getCurrentUserId();
 $username = getCurrentUsername();
+
+// Check if this is race mode
+$raceMode = isset($_GET['race_mode']) && $_GET['race_mode'] == '1';
+$opponentName = $_GET['opponent'] ?? 'Opponent';
+$opponentId = $_GET['opponent_id'] ?? 0;
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -24,7 +29,10 @@ $username = getCurrentUsername();
 <body class="theme-classic">
     <nav class="top-nav">
         <div class="nav-left">
-            <h1 class="nav-title">Practice Mode</h1>
+            <h1 class="nav-title"><?php echo $raceMode ? '🏁 Race Mode' : 'Practice Mode'; ?></h1>
+            <?php if ($raceMode): ?>
+                <p style="margin:0; font-size:0.9em; color:#aaa;">Racing against <?php echo htmlspecialchars($opponentName); ?></p>
+            <?php endif; ?>
         </div>
         <div class="nav-right">
             <span class="username-display"><?php echo htmlspecialchars($username); ?></span>
@@ -122,11 +130,19 @@ $username = getCurrentUsername();
         </div>
     </div>
     
-    <script src="assets/js/common.js"></script>
-    <script src="assets/js/practice.js"></script>
+    <script src="assets/js/common.js?v=2"></script>
+    <script src="assets/js/practice.js?v=2"></script>
     <script>
         const userId = <?php echo $userId; ?>;
-        Practice.init(userId);
+        const raceMode = <?php echo $raceMode ? 'true' : 'false'; ?>;
+        const opponentId = <?php echo $opponentId; ?>;
+        const opponentName = '<?php echo addslashes($opponentName); ?>';
+        
+        if (raceMode) {
+            Practice.initRace(userId, opponentId, opponentName);
+        } else {
+            Practice.init(userId);
+        }
     </script>
 </body>
 </html>
