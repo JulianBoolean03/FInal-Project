@@ -88,6 +88,8 @@ const Game = {
         const validMoves = this.getValidMoves();
         
         if (validMoves.includes(index)) {
+            Sound.play("assests/sound_effects/Jingle_Bell/Click.mp3", 0.35);
+
             this.swapTiles(this.emptyPos, index);
             this.moves++;
             this.updateMoveCounter();
@@ -109,6 +111,9 @@ const Game = {
     handleWin: function() {
         this.stopTimer();
         const timeMs = Date.now() - this.startTime;
+
+        //Sound Effect for Win
+        Sound.play("assets/sound_effects/panto-clowns-jingle-win.mp3");
         
         // Submit results
         this.submitResults(timeMs);
@@ -139,14 +144,26 @@ const Game = {
     
     setupEventListeners: function() {
         // Power-ups
-        document.getElementById('powerup-hint').addEventListener('click', () => this.useHintPowerup());
-        document.getElementById('powerup-solve').addEventListener('click', () => this.useSolvePowerup());
-        document.getElementById('powerup-preview').addEventListener('click', () => this.usePreviewPowerup());
+        document.getElementById('powerup-hint').addEventListener('click', () => {
+            Sound.play("assets/sound_effects/Ho-Ho-Ho-Power_Up.mp3");
+            this.useHintPowerup();
+        });
+        document.getElementById('powerup-solve').addEventListener('click', () => {
+            Sound.play("assets/sound_effects/Ho-Ho-Ho-Power_Up.mp3");
+            this.useSolvePowerup();
+        });
+        document.getElementById('powerup-preview').addEventListener('click', () => { 
+            Sound.play("assets/sound_effects/Ho-Ho-Ho-Power_Up.mp3");
+            this.usePreviewPowerup();
+        });
         
         // Chat
         document.getElementById('chat-form').addEventListener('submit', (e) => {
             e.preventDefault();
             this.sendChatMessage();
+
+            //Click sound
+            Sound.play("assets/sound_effects/Jingle_Bell_Click.mp3", 0.5);
         });
     },
     

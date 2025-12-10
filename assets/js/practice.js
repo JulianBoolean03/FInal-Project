@@ -36,15 +36,29 @@ const Practice = {
     },
     
     setupEventListeners: function() {
-        document.getElementById('new-game-btn').addEventListener('click', () => this.startNewGame());
-        document.getElementById('powerup-hint').addEventListener('click', () => this.useHint());
-        document.getElementById('powerup-solve').addEventListener('click', () => this.usePeek());
-        document.getElementById('powerup-reset').addEventListener('click', () => this.resetPuzzle());
+        document.getElementById('new-game-btn').addEventListener('click', () => {
+            Sound.play("assets/sound_effects/Jingle_Bell_Click.mp3");
+            this.startNewGame();
+        });
+        document.getElementById('powerup-hint').addEventListener('click', () => {
+            Sound.play("assets/sound_effects/Jingle_Bell_Click.mp3");
+            this.useHint();
+        });
+        document.getElementById('powerup-solve').addEventListener('click', () => {
+            Sound.play("assets/sound_effects/Jingle_Bell_Click.mp3");
+            this.usePeek();
+        });
+        document.getElementById('powerup-reset').addEventListener('click', () => {
+            Sound.play("assets/sound_effects/Jingle_Bell_Click.mp3");
+            this.resetPuzzle();
+        });
         document.getElementById('play-again-btn').addEventListener('click', () => {
+            Sound.play("assets/sound_effects/Jingle_Bell_Click.mp3");
             document.getElementById('win-modal').classList.remove('show');
             this.startNewGame();
         });
         document.getElementById('back-lobby-btn').addEventListener('click', () => {
+            Sound.play("assets/sound_effects/Jingle_Bell_Click.mp3");
             window.location.href = 'lobby.php';
         });
     },
@@ -114,6 +128,9 @@ const Practice = {
         const validMoves = this.getValidMoves();
         
         if (validMoves.includes(index)) {
+            //Tile slide sound
+            Sound.play("assets/sound_effects/Christmas_Slide.mp3", 0.35);
+
             this.swapTiles(this.emptyPos, index);
             this.moves++;
             this.updateMoveCounter();
@@ -135,6 +152,9 @@ const Practice = {
     handleWin: function() {
         this.stopTimer();
         const timeMs = Date.now() - this.startTime;
+
+        //Win sound
+
         
         if (this.raceMode) {
             // Mark as finished in race
