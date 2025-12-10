@@ -89,32 +89,11 @@ $success = $_GET['success'] ?? '';
                 
                 <div class="card option-card">
                     <h2>Quick Match</h2>
-                    <p>Jump into a game with another player</p>
+                    <p>Race against another player!</p>
                     <a href="quick_match.php" class="btn btn-primary btn-large" style="text-decoration: none;">Find Match</a>
-                </div>
-                
-                <div class="card option-card">
-                    <h2>Create Private Room</h2>
-                    <p>Create a room and invite friends with a code</p>
-                    <button id="create-private-btn" class="btn btn-primary btn-large">Create Private Room</button>
-                </div>
-                
-                <div class="card option-card">
-                    <h2>Join Private Room</h2>
-                    <p>Enter a room code to join your friends</p>
-                    <form id="join-private-form">
-                        <input type="text" id="room-code-input" placeholder="Enter room code" 
-                               maxlength="10" style="text-transform: uppercase;">
-                        <button type="submit" class="btn btn-primary btn-large">Join Room</button>
-                    </form>
                 </div>
             </div>
             
-            <!-- Available Public Rooms -->
-            <div class="card">
-                <h2>Available Public Rooms</h2>
-                <div id="public-rooms-list"></div>
-            </div>
         <?php endif; ?>
         
         <!-- Player Stats -->

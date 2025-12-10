@@ -6,6 +6,7 @@ requireAuth();
 $userId = getCurrentUserId();
 $username = getCurrentUsername();
 $db = getDB();
+
 executeQuery("DELETE FROM room_players WHERE user_id = ?", '', [$userId]);
 $stmt = executeQuery("SELECT a.user_id, u.username FROM analytics a JOIN users u ON a.user_id = u.id WHERE a.best_time_ms = 999999999 AND a.user_id != ? LIMIT 1", '', [$userId]);
 $waitingPlayer = $stmt ? $stmt->fetch(PDO::FETCH_ASSOC) : null;
