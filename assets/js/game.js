@@ -88,7 +88,8 @@ const Game = {
         const validMoves = this.getValidMoves();
         
         if (validMoves.includes(index)) {
-            Sound.play("assests/sound_effects/Jingle_Bell/Click.mp3", 0.35);
+            //Tile Slide sound
+            Sound.play("assets/sound_effects/Christmas_Slide.mp3", 0.35);
 
             this.swapTiles(this.emptyPos, index);
             this.moves++;
