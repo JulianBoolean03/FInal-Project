@@ -23,19 +23,19 @@ $opponentId = $_GET['opponent_id'] ?? 0;
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?php echo SITE_NAME; ?> - Practice Mode</title>
+    <title><?php echo SITE_NAME; ?> - 🎆Practice Mode🎆</title>
     <link rel="stylesheet" href="assets/css/styles.css">
 </head>
 <body class="theme-classic">
     <nav class="top-nav">
         <div class="nav-left">
-            <h1 class="nav-title"><?php echo $raceMode ? '🏁 Race Mode' : 'Practice Mode'; ?></h1>
+            <h1 class="nav-title"><?php echo $raceMode ? '🏁 Race Mode' : '🌨️Practice Mode'; ?></h1>
             <?php if ($raceMode): ?>
                 <p style="margin:0; font-size:0.9em; color:#aaa;">Racing against <?php echo htmlspecialchars($opponentName); ?></p>
             <?php endif; ?>
         </div>
         <div class="nav-right">
-            <span class="username-display"><?php echo htmlspecialchars($username); ?></span>
+            <span class="username-display">✨<?php echo htmlspecialchars($username); ?>✨</span>
             <a href="lobby.php" class="btn btn-small">Back to Lobby</a>
         </div>
     </nav>
@@ -46,15 +46,15 @@ $opponentId = $_GET['opponent_id'] ?? 0;
             <div class="card puzzle-card">
                 <div class="game-stats">
                     <div class="stat">
-                        <span class="stat-label">Time:</span>
+                        <span class="stat-label">⏱️Time:</span>
                         <span id="timer" class="stat-value">00:00</span>
                     </div>
                     <div class="stat">
-                        <span class="stat-label">Moves:</span>
+                        <span class="stat-label">▶️Moves:</span>
                         <span id="move-counter" class="stat-value">0</span>
                     </div>
                     <div class="stat">
-                        <span class="stat-label">Best:</span>
+                        <span class="stat-label">✔️Best:</span>
                         <span id="best-time" class="stat-value">--:--</span>
                     </div>
                 </div>
@@ -63,18 +63,18 @@ $opponentId = $_GET['opponent_id'] ?? 0;
                 
                 <div class="puzzle-controls">
                     <button id="new-game-btn" class="btn btn-primary" style="margin-bottom: 1rem;">
-                        New Puzzle
+                        🔰New Puzzle🔰
                     </button>
                     <h3>Power-ups (Practice)</h3>
                     <div class="powerups">
                         <button id="powerup-hint" class="btn btn-powerup" title="Highlight 3 wrong tiles">
-                            Hint
+                            💡Hint
                         </button>
                         <button id="powerup-solve" class="btn btn-powerup" title="Show solution preview">
-                            Peek
+                            👁️Peek
                         </button>
                         <button id="powerup-reset" class="btn btn-powerup" title="Reset puzzle">
-                            Reset
+                            🔄Reset
                         </button>
                     </div>
                 </div>

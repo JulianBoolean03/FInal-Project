@@ -31,7 +31,7 @@ $opponentName = $_GET['opponent'] ?? 'Opponent';
             <div class="card puzzle-card">
                 <div class="game-stats">
                     <div class="stat">
-                        <span class="stat-label">Time:</span>
+                        <span class="stat-label">⏱️Time:</span>
                         <span id="timer" class="stat-value">00:00</span>
                     </div>
                     <div class="stat">
