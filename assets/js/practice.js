@@ -30,11 +30,11 @@ const Practice = {
             this.useHint();
         });
         document.getElementById('powerup-solve').addEventListener('click', () => {
-            Sound.play("assets/sound_effects/Ho-Ho-Ho-Power_Up.mp3");
+            Sound.play("assets/sound_effects/Power_Up.mp3");
             this.usePeek();
         });
         document.getElementById('powerup-reset').addEventListener('click', () => {
-            Sound.play("assets/sound_effects/Ho-Ho-Ho-Power_Up.mp3");
+            Sound.play("assets/sound_effects/Power_Up.mp3");
             this.resetPuzzle();
         });
         document.getElementById('play-again-btn').addEventListener('click', () => {

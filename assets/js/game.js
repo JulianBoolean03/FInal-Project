@@ -146,15 +146,15 @@ const Game = {
     setupEventListeners: function() {
         // Power-ups
         document.getElementById('powerup-hint').addEventListener('click', () => {
-            Sound.play("assets/sound_effects/Ho-Ho-Ho-Power_Up.mp3");
+            Sound.play("assets/sound_effects/Power_Up.mp3");
             this.useHintPowerup();
         });
         document.getElementById('powerup-solve').addEventListener('click', () => {
-            Sound.play("assets/sound_effects/Ho-Ho-Ho-Power_Up.mp3");
+            Sound.play("assets/sound_effects/Power_Up.mp3");
             this.useSolvePowerup();
         });
         document.getElementById('powerup-preview').addEventListener('click', () => { 
-            Sound.play("assets/sound_effects/Ho-Ho-Ho-Power_Up.mp3");
+            Sound.play("assets/sound_effects/Power_Up.mp3");
             this.usePreviewPowerup();
         });
         
