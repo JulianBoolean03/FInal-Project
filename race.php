@@ -40,7 +40,7 @@ $opponentName = $_GET['opponent'] ?? 'Opponent';
                     </div>
                 </div>
                 <div id="puzzle-board" class="puzzle-board"></div>
-                <button id="forfeit-btn" class="btn btn-danger" style="margin-top: 1rem;">Forfeit</button>
+                <button id="forfeit-btn" class="btn btn-danger" style="margin-top: 1rem;">🥶Forfeit</button>
             </div>
         </div>
         
