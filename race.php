@@ -35,7 +35,7 @@ $opponentName = $_GET['opponent'] ?? 'Opponent';
                         <span id="timer" class="stat-value">00:00</span>
                     </div>
                     <div class="stat">
-                        <span class="stat-label">Moves:</span>
+                        <span class="stat-label">▶️Moves:</span>
                         <span id="move-counter" class="stat-value">0</span>
                     </div>
                 </div>
