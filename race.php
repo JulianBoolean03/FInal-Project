@@ -182,8 +182,9 @@ $opponentName = $_GET['opponent'] ?? 'Opponent';
                     body: JSON.stringify({ room_id: 0, user_id: this.userId, message: 'RACE_FORFEIT_' + this.userId })
                 });
                 
-                // Redirect to lobby
-                window.location.href = 'lobby.php';
+                // Show user who forfeited they lost before redirecting to lobby
+                //window.location.href = 'lobby.php';
+                this.handleLoss();
             },
             
             handleLoss: function(forfeited = false) {
@@ -236,7 +237,9 @@ $opponentName = $_GET['opponent'] ?? 'Opponent';
                             m.message && m.message.includes('RACE_FORFEIT_') && m.user_id == this.opponentId
                         );
                         if (opponentForfeit) {
+                            this.stopMonitoring();
                             this.handleLoss(true);
+                            return;
                         }
                     }
                 }, 1000);
