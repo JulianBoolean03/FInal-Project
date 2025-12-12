@@ -61,6 +61,17 @@ $success = $_GET['success'] ?? '';
     </nav>
     
     <div class="container">
+        <!-- Theme Selector -->
+        <div class="card">
+            <h2>Theme Selector</h2>
+            <div class="theme-options">
+                <button class="btn btn-secondary" data-theme="theme-classic">Classic</button>
+                <button class="btn btn-secondary" data-theme="theme-snowy">Snowy</button>
+                <button class="btn btn-secondary" data-theme="theme-candycane">Candy Cane</button>
+            </div>
+        </div>
+
+    
         <?php if ($error === 'room_full'): ?>
             <div class="alert alert-error">Room is full.</div>
         <?php elseif ($error === 'invalid_code'): ?>
@@ -121,6 +132,34 @@ $success = $_GET['success'] ?? '';
         } else {
             Lobby.initLobby();
         }
+
+        //Theme Switching via JavaScript
+        function updateActiveButton(theme) {
+            document.querySelectorAll('.theme-options button').forEach(btn => {
+                btn.classList.toggle('active', btn.getAttribute('data-theme') === theme);
+            });
+        }
+
+        document.querySelectorAll('.theme-options button').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const selectedTheme = btn.getAttribute('data-theme');
+
+                // Remove previous used theme classes
+                document.body.classList.remove('theme-classic', 'theme-snowy', 'theme-candycane');
+
+                // Apply selected theme to lobby
+                document.body.classList.add(selectedTheme);
+
+                // Save preference in localStorage
+                localStorage.setItem('selectedTheme', selectedTheme);
+            });
+        });
+
+        // Apply saved theme on page load
+        const savedTheme = localStorage.getItem('selectedTheme') || 'theme-classic';
+        document.body.classList.add(savedTheme);
+        updateActiveButton(savedTheme);
     </script>
+    <script src="assets/js/theme.js"></script>
 </body>
 </html>

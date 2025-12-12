@@ -203,6 +203,8 @@ if (!$gameId) {
     
     <script src="assets/js/common.js"></script>
     <script src="assets/js/game.js"></script>
+    <script src="assets/js/theme.js"></script>
+
     <script>
         const roomId = <?php echo $roomId; ?>;
         const gameId = <?php echo $gameId ?? 'null'; ?>;

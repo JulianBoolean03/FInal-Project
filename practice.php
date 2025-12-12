@@ -144,5 +144,6 @@ $opponentId = $_GET['opponent_id'] ?? 0;
             Practice.init(userId);
         }
     </script>
+    <script src="assets/js/theme.js"></script>
 </body>
 </html>

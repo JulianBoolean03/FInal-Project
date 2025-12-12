@@ -175,16 +175,23 @@ $opponentName = $_GET['opponent'] ?? 'Opponent';
                 this.stopTimer();
                 this.stopMonitoring();
                 
-                // Send forfeit message
+                // Notify that current user forfeited
                 fetch('api/chat_send.php', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ room_id: 0, user_id: this.userId, message: 'RACE_FORFEIT_' + this.userId })
                 });
+
+                // Notify opponent they won
+                fetch('api/chat_send.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ room_id: 0, user_id: this.userId, message: 'RACE_WIN_' + this.userId })
+                });
                 
                 // Show user who forfeited they lost before redirecting to lobby
                 //window.location.href = 'lobby.php';
-                this.handleLoss();
+                this.handleLoss(true);
             },
             
             handleLoss: function(forfeited = false) {
@@ -193,10 +200,10 @@ $opponentName = $_GET['opponent'] ?? 'Opponent';
                 document.getElementById('forfeit-btn').disabled = true;
                 document.getElementById('win-modal').classList.add('show');
                 
-                if (forfeited) {
+                if (forfeited) { //Tells user they lost because they forfeited
                     document.getElementById('result-message').innerHTML = `
-                        <h2 style="color: gold;">🏆 YOU WON! 🏆</h2>
-                        <p>${sanitizeHTML(this.opponentName)} forfeited!</p>
+                        <h2 style="color: #ff6b6b;">You Lost!</h2>
+                        <p>You forfeited the race & ${sanitizeHTML(this.opponentName)} won.</p>
                     `;
                 } else {
                     document.getElementById('result-message').innerHTML = `
@@ -205,6 +212,18 @@ $opponentName = $_GET['opponent'] ?? 'Opponent';
                     `;
                     setTimeout(() => window.location.href = 'lobby.php', 3000);
                 }
+            },
+
+            //For handling when opponent forfeits
+            handleOpponentForfeit: function() {
+                this.stopTimer();
+                this.stopMonitoring();
+                document.getElementById('forfeit-btn').disabled = true;
+                document.getElementById('win-modal').classList.add('show');
+                    document.getElementById('result-message').innerHTML = `
+                        <h2 style="color: gold;">🏆 YOU WON! 🏆</h2>
+                        <p>${sanitizeHTML(this.opponentName)} forfeited!</p>
+                    `;
             },
             
             startTimer: function() {
@@ -237,8 +256,7 @@ $opponentName = $_GET['opponent'] ?? 'Opponent';
                             m.message && m.message.includes('RACE_FORFEIT_') && m.user_id == this.opponentId
                         );
                         if (opponentForfeit) {
-                            this.stopMonitoring();
-                            this.handleLoss(true);
+                            this.handleOpponentForfeit();
                             return;
                         }
                     }
@@ -252,5 +270,6 @@ $opponentName = $_GET['opponent'] ?? 'Opponent';
         
         Race.init();
     </script>
+    <script src="assets/js/theme.js"></script>
 </body>
 </html>

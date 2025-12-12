@@ -127,5 +127,6 @@ if ($stmt) {
         
         Ranking.init(roomId, userId);
     </script>
+    <script src="assets/js/theme.js"></script>
 </body>
 </html>

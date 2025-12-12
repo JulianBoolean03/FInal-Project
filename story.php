@@ -103,6 +103,7 @@ if (!$story) {
     
     <script src="assets/js/common.js"></script>
     <script src="assets/js/story.js"></script>
+    <script src="assets/js/theme.js"></script>
     <script>
         const roomId = <?php echo $roomId; ?>;
         Story.init(roomId);
