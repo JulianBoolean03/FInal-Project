@@ -36,6 +36,7 @@ if ($stmt) {
     while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
         $messages[] = [
             'id' => $row['id'],
+            'user_id' => $row['user_id'],
             'username' => $row['username'],
             'message' => $row['message'],
             'time' => date('g:i A', strtotime($row['created_at']))

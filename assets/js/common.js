@@ -3,6 +3,15 @@
  * Provides AJAX helpers and shared functions
  */
 
+/* Sound effects for both single & multiplayer */
+const Sound = {
+    play(src, volume = 0.5) {
+        const audio = new Audio(src);
+        audio.volume = volume;
+        audio.play().catch(() => {});
+    }
+};
+
 const API = {
     /**
      * Make an AJAX GET request

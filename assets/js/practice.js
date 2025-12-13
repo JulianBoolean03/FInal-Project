@@ -12,10 +12,6 @@ const Practice = {
     timerInterval: null,
     stats: { gamesPlayed: 0, solved: 0, bestTime: 0, totalMoves: 0 },
     recentGames: [],
-    raceMode: false,
-    opponentId: null,
-    opponentName: '',
-    raceCheckInterval: null,
     
     init: function(userId) {
         this.userId = userId;
@@ -24,27 +20,30 @@ const Practice = {
         this.startNewGame();
     },
     
-    initRace: function(userId, opponentId, opponentName) {
-        this.userId = userId;
-        this.opponentId = opponentId;
-        this.opponentName = opponentName;
-        this.raceMode = true;
-        // Don't load stats in race mode
-        this.setupEventListeners();
-        this.startNewGame();
-        this.startRaceMonitoring();
-    },
-    
     setupEventListeners: function() {
-        document.getElementById('new-game-btn').addEventListener('click', () => this.startNewGame());
-        document.getElementById('powerup-hint').addEventListener('click', () => this.useHint());
-        document.getElementById('powerup-solve').addEventListener('click', () => this.usePeek());
-        document.getElementById('powerup-reset').addEventListener('click', () => this.resetPuzzle());
+        document.getElementById('new-game-btn').addEventListener('click', () => {
+            Sound.play("assets/sound_effects/Jingle_Bell_Click.mp3");
+            this.startNewGame();
+        });
+        document.getElementById('powerup-hint').addEventListener('click', () => {
+            Sound.play("assets/sound_effects/Jingle_Bell_Click.mp3");
+            this.useHint();
+        });
+        document.getElementById('powerup-solve').addEventListener('click', () => {
+            Sound.play("assets/sound_effects/Power_Up.mp3");
+            this.usePeek();
+        });
+        document.getElementById('powerup-reset').addEventListener('click', () => {
+            Sound.play("assets/sound_effects/Power_Up.mp3");
+            this.resetPuzzle();
+        });
         document.getElementById('play-again-btn').addEventListener('click', () => {
+            Sound.play("assets/sound_effects/Jingle_Bell_Click.mp3");
             document.getElementById('win-modal').classList.remove('show');
             this.startNewGame();
         });
         document.getElementById('back-lobby-btn').addEventListener('click', () => {
+            Sound.play("assets/sound_effects/Jingle_Bell_Click.mp3");
             window.location.href = 'lobby.php';
         });
     },
@@ -58,11 +57,9 @@ const Practice = {
         this.updateMoveCounter();
         this.startTimer();
         
-        if (!this.raceMode) {
-            this.stats.gamesPlayed++;
-            this.saveStats();
-            this.updateStatsDisplay();
-        }
+        this.stats.gamesPlayed++;
+        this.saveStats();
+        this.updateStatsDisplay();
     },
     
     shufflePuzzle: function() {
@@ -114,6 +111,9 @@ const Practice = {
         const validMoves = this.getValidMoves();
         
         if (validMoves.includes(index)) {
+            //Tile slide sound (EDIT SOUND)
+            Sound.play("assets/sound_effects/Christmas_Slide.mp3", 0.35);
+
             this.swapTiles(this.emptyPos, index);
             this.moves++;
             this.updateMoveCounter();
@@ -135,46 +135,18 @@ const Practice = {
     handleWin: function() {
         this.stopTimer();
         const timeMs = Date.now() - this.startTime;
+
+        //Win sound
+        Sound.play("assets/sound_effects/panto-clowns-jingle-win/mp3");
         
-        if (this.raceMode) {
-            // Mark as finished in race
-            this.stopRaceMonitoring();
-            
-            // Mark self as winner (set flag to 777777777)
-            fetch('api/chat_send.php', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ 
-                    room_id: 0, 
-                    user_id: this.userId,
-                    message: 'RACE_WIN_' + this.userId 
-                })
-            });
-            
-            // Show win modal
-            const modal = document.getElementById('win-modal');
-            modal.classList.add('show');
-            document.getElementById('completion-stats').innerHTML = `
-                <h2 style="color: gold;">🏆 YOU WON! 🏆</h2>
-                <p><strong>Time:</strong> ${formatTime(timeMs)}</p>
-                <p><strong>Moves:</strong> ${this.moves}</p>
-                <p>You beat ${sanitizeHTML(this.opponentName)}!</p>
-            `;
-            
-            document.getElementById('play-again-btn').textContent = 'Find New Match';
-            document.getElementById('play-again-btn').onclick = () => {
-                window.location.href = 'quick_match.php';
-            };
-            return;
-        }
-        
-        // Normal practice mode win
+        // Update stats
         this.stats.solved++;
         this.stats.totalMoves += this.moves;
         if (this.stats.bestTime === 0 || timeMs < this.stats.bestTime) {
             this.stats.bestTime = timeMs;
         }
         
+        // Add to recent games
         this.recentGames.unshift({
             time: timeMs,
             moves: this.moves,
@@ -186,6 +158,7 @@ const Practice = {
         this.updateStatsDisplay();
         this.displayRecentGames();
         
+        // Show win modal
         const modal = document.getElementById('win-modal');
         modal.classList.add('show');
         
@@ -194,62 +167,6 @@ const Practice = {
             <p><strong>Moves:</strong> ${this.moves}</p>
             ${timeMs === this.stats.bestTime ? '<p style="color: var(--accent);">New Best Time!</p>' : ''}
         `;
-    },
-    
-    startRaceMonitoring: function() {
-        // Check every second if opponent finished or left
-        this.raceCheckInterval = setInterval(async () => {
-            // Check if opponent finished (look for their win marker)
-            const response = await fetch('api/chat_poll.php?room_id=0');
-            const data = await response.json();
-            
-            if (data.success && data.messages) {
-                const opponentWin = data.messages.find(m => 
-                    m.message && m.message.includes('RACE_WIN_') && m.user_id == this.opponentId
-                );
-                
-                if (opponentWin) {
-                    this.handleRaceLoss();
-                }
-            }
-        }, 1000);
-        
-        // Also detect if user closes tab/navigates away
-        window.addEventListener('beforeunload', () => {
-            if (this.raceMode) {
-                this.stopRaceMonitoring();
-            }
-        });
-    },
-    
-    stopRaceMonitoring: function() {
-        if (this.raceCheckInterval) {
-            clearInterval(this.raceCheckInterval);
-            this.raceCheckInterval = null;
-        }
-    },
-    
-    handleRaceLoss: function() {
-        this.stopTimer();
-        this.stopRaceMonitoring();
-        
-        const modal = document.getElementById('win-modal');
-        modal.classList.add('show');
-        document.getElementById('completion-stats').innerHTML = `
-            <h2 style="color: #ff6b6b;">You Lost!</h2>
-            <p>${sanitizeHTML(this.opponentName)} finished first!</p>
-            <p>Better luck next time!</p>
-        `;
-        
-        document.getElementById('play-again-btn').textContent = 'Find New Match';
-        document.getElementById('play-again-btn').onclick = () => {
-            window.location.href = 'quick_match.php';
-        };
-        
-        // Auto-redirect after 3 seconds
-        setTimeout(() => {
-            window.location.href = 'lobby.php';
-        }, 3000);
     },
     
     startTimer: function() {

@@ -52,15 +52,26 @@ $success = $_GET['success'] ?? '';
 <body class="theme-classic">
     <nav class="top-nav">
         <div class="nav-left">
-            <h1 class="nav-title">Reindeer Games</h1>
+            <h1 class="nav-title">🦌Reindeer Games🦌</h1>
         </div>
         <div class="nav-right">
-            <span class="username-display">Welcome, <?php echo htmlspecialchars($username); ?></span>
+            <span class="username-display">✨Welcome, <?php echo htmlspecialchars($username); ?>✨</span>
             <a href="logout.php" class="btn btn-small">Logout</a>
         </div>
     </nav>
     
     <div class="container">
+        <!-- Theme Selector -->
+        <div class="card">
+            <h2>Theme Selector</h2>
+            <div class="theme-options">
+                <button class="btn btn-secondary" data-theme="theme-classic">🎅Classic🎅</button>
+                <button class="btn btn-secondary" data-theme="theme-snowy">❄️Snowy❄️</button>
+                <button class="btn btn-secondary" data-theme="theme-candycane">🍬Candy Cane🍬</button>
+            </div>
+        </div>
+
+    
         <?php if ($error === 'room_full'): ?>
             <div class="alert alert-error">Room is full.</div>
         <?php elseif ($error === 'invalid_code'): ?>
@@ -82,13 +93,13 @@ $success = $_GET['success'] ?? '';
             <!-- Join/Create Room Options -->
             <div class="lobby-options">
                 <div class="card option-card">
-                    <h2>Practice Mode</h2>
+                    <h2>🔔Practice Mode🔔</h2>
                     <p>Play solo and improve your skills</p>
                     <a href="practice.php" class="btn btn-primary btn-large" style="text-decoration: none;">Practice Solo</a>
                 </div>
                 
                 <div class="card option-card">
-                    <h2>Quick Match</h2>
+                    <h2>👨‍👩‍👧‍👦Quick Match👨‍👩‍👧‍👦</h2>
                     <p>Race against another player!</p>
                     <a href="quick_match.php" class="btn btn-primary btn-large" style="text-decoration: none;">Find Match</a>
                 </div>
@@ -98,13 +109,13 @@ $success = $_GET['success'] ?? '';
         
         <!-- Player Stats -->
         <div class="card">
-            <h2>Your Stats</h2>
+            <h2>☃️Your Stats☃️</h2>
             <div id="player-stats"></div>
         </div>
         
         <!-- Achievements -->
         <div class="card">
-            <h2>Your Achievements</h2>
+            <h2>🎁Your Achievements🎁</h2>
             <div id="achievements-list"></div>
         </div>
     </div>
@@ -121,6 +132,34 @@ $success = $_GET['success'] ?? '';
         } else {
             Lobby.initLobby();
         }
+
+        //Theme Switching via JavaScript
+        function updateActiveButton(theme) {
+            document.querySelectorAll('.theme-options button').forEach(btn => {
+                btn.classList.toggle('active', btn.getAttribute('data-theme') === theme);
+            });
+        }
+
+        document.querySelectorAll('.theme-options button').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const selectedTheme = btn.getAttribute('data-theme');
+
+                // Remove previous used theme classes
+                document.body.classList.remove('theme-classic', 'theme-snowy', 'theme-candycane');
+
+                // Apply selected theme to lobby
+                document.body.classList.add(selectedTheme);
+
+                // Save preference in localStorage
+                localStorage.setItem('selectedTheme', selectedTheme);
+            });
+        });
+
+        // Apply saved theme on page load
+        const savedTheme = localStorage.getItem('selectedTheme') || 'theme-classic';
+        document.body.classList.add(savedTheme);
+        updateActiveButton(savedTheme);
     </script>
+    <script src="assets/js/theme.js"></script>
 </body>
 </html>
