@@ -30,4 +30,3 @@ if ($waitingPlayer) {
 ?>
 <!DOCTYPE html><html><head><title>Finding Match...</title><link rel="stylesheet" href="assets/css/styles.css"></head><body class="theme-classic"><div style="display:flex;align-items:center;justify-content:center;height:100vh;flex-direction:column;"><h1>🎄 Finding Opponent... 🎄</h1><p>Waiting for another player...</p><div class="spinner" style="border:4px solid #f3f3f3;border-top:4px solid #3498db;border-radius:50%;width:50px;height:50px;animation:spin 1s linear infinite;margin:20px;"></div><a href="lobby.php" class="btn btn-danger">Cancel</a></div><style>@keyframes spin{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}</style><script>setTimeout(()=>{window.location.reload();},500);</script></body></html>
 <?php } ?>
-<script src="assets/js/theme.js"></script>
