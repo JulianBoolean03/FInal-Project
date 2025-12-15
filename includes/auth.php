@@ -199,4 +199,29 @@ function isValidUsername($username) {
 function isValidPassword($password) {
     return strlen($password) >= 6;
 }
+
+/**
+ * Get username color based on race achievements
+ * @param int $userId User ID
+ * @return string CSS color code
+ */
+function getUsernameColor($userId) {
+    $stmt = executeQuery(
+        "SELECT race_wins FROM analytics WHERE user_id = ?",
+        '',
+        [$userId]
+    );
+    
+    if (!$stmt) return '#FFFFFF';
+    $row = $stmt->fetch(PDO::FETCH_ASSOC);
+    $raceWins = $row ? $row['race_wins'] : 0;
+    
+    // Return color based on wins (highest tier achieved)
+    if ($raceWins >= 50) return '#FF0000'; // Legendary - Red
+    if ($raceWins >= 25) return '#E5E4E2'; // Platinum - Light Gray
+    if ($raceWins >= 10) return '#FFD700'; // Gold
+    if ($raceWins >= 5) return '#C0C0C0';  // Silver
+    if ($raceWins >= 1) return '#CD7F32';  // Bronze
+    return '#FFFFFF'; // Default white
+}
 ?>

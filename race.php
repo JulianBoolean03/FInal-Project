@@ -22,7 +22,7 @@ $opponentName = $_GET['opponent'] ?? 'Opponent';
             <h1 class="nav-title">🏁 Racing against <?php echo htmlspecialchars($opponentName); ?></h1>
         </div>
         <div class="nav-right">
-            <span class="username-display"><?php echo htmlspecialchars($username); ?></span>
+            <span class="username-display" style="color: <?php echo $usernameColor; ?>; font-weight: bold;"><?php echo htmlspecialchars($username); ?></span>
         </div>
     </nav>
     
@@ -218,6 +218,14 @@ $opponentName = $_GET['opponent'] ?? 'Opponent';
             handleOpponentForfeit: function() {
                 this.stopTimer();
                 this.stopMonitoring();
+                
+                // Record win in analytics (opponent forfeited, current user wins)
+                fetch('api/record_race_win.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ user_id: this.userId })
+                });
+                
                 document.getElementById('forfeit-btn').disabled = true;
                 document.getElementById('win-modal').classList.add('show');
                     document.getElementById('result-message').innerHTML = `

@@ -132,6 +132,38 @@ $success = $_GET['success'] ?? '';
             </div>
         </div>
         
+        <div class="achievements-showcase card" style="margin-top: 2rem; padding: 1.5rem; background: rgba(255, 255, 255, 0.1);">
+            <h2 style="text-align: center; margin-bottom: 1rem;">🏆 Race Win Achievements 🏆</h2>
+            <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 1rem;">
+                <div class="achievement-card" style="text-align: center; padding: 1rem; border: 2px solid #CD7F32; border-radius: 8px; min-width: 150px;">
+                    <div style="font-size: 2rem;">🥉</div>
+                    <div style="font-weight: bold; color: #CD7F32;">Bronze Racer</div>
+                    <div style="font-size: 0.9rem;">1 Win</div>
+                </div>
+                <div class="achievement-card" style="text-align: center; padding: 1rem; border: 2px solid #C0C0C0; border-radius: 8px; min-width: 150px;">
+                    <div style="font-size: 2rem;">🥈</div>
+                    <div style="font-weight: bold; color: #C0C0C0;">Silver Racer</div>
+                    <div style="font-size: 0.9rem;">5 Wins</div>
+                </div>
+                <div class="achievement-card" style="text-align: center; padding: 1rem; border: 2px solid #FFD700; border-radius: 8px; min-width: 150px;">
+                    <div style="font-size: 2rem;">🥇</div>
+                    <div style="font-weight: bold; color: #FFD700;">Gold Racer</div>
+                    <div style="font-size: 0.9rem;">10 Wins</div>
+                </div>
+                <div class="achievement-card" style="text-align: center; padding: 1rem; border: 2px solid #E5E4E2; border-radius: 8px; min-width: 150px;">
+                    <div style="font-size: 2rem;">💎</div>
+                    <div style="font-weight: bold; color: #E5E4E2;">Platinum Racer</div>
+                    <div style="font-size: 0.9rem;">25 Wins</div>
+                </div>
+                <div class="achievement-card" style="text-align: center; padding: 1rem; border: 2px solid #FF0000; border-radius: 8px; min-width: 150px;">
+                    <div style="font-size: 2rem;">👑</div>
+                    <div style="font-weight: bold; color: #FF0000;">Legendary Racer</div>
+                    <div style="font-size: 0.9rem;">50 Wins</div>
+                </div>
+            </div>
+            <p style="text-align: center; margin-top: 1rem; font-size: 0.9rem; color: #ccc;">Win races to unlock colored usernames!</p>
+        </div>
+        
         <div class="credits">
             <p>Created by Julian Robinson & Amanda Nguyen</p>
             <p>CSC Web Programming Final Project</p>

@@ -5,6 +5,7 @@ require_once 'includes/auth.php';
 requireAuth();
 $userId = getCurrentUserId();
 $username = getCurrentUsername();
+$usernameColor = getUsernameColor($userId);
 $db = getDB();
 
 executeQuery("DELETE FROM room_players WHERE user_id = ?", '', [$userId]);

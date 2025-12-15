@@ -127,4 +127,9 @@ INSERT OR IGNORE INTO achievements (achievement_key, name, description, icon) VA
 ('night_owl', 'Night Owl', 'Play a game after midnight', '🦉'),
 ('social_butterfly', 'Social Butterfly', 'Play with 5 different people', '🦋'),
 ('story_complete', 'Story Complete', 'Finish all story segments', '📖'),
-('power_master', 'Power Master', 'Use all three power-up types', '✨');
+('power_master', 'Power Master', 'Use all three power-up types', '✨'),
+('bronze_racer', 'Bronze Racer - #CD7F32', 'Win 1 race match', '🥉'),
+('silver_racer', 'Silver Racer - #C0C0C0', 'Win 5 race matches', '🥈'),
+('gold_racer', 'Gold Racer - #FFD700', 'Win 10 race matches', '🥇'),
+('platinum_racer', 'Platinum Racer - #E5E4E2', 'Win 25 race matches', '💎'),
+('legendary_racer', 'Legendary Racer - #FF0000', 'Win 50 race matches', '👑');

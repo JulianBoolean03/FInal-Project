@@ -55,7 +55,7 @@ $success = $_GET['success'] ?? '';
             <h1 class="nav-title">🦌Reindeer Games🦌</h1>
         </div>
         <div class="nav-right">
-            <span class="username-display">✨Welcome, <?php echo htmlspecialchars($username); ?>✨</span>
+            <span class="username-display">✨Welcome, <span style="color: <?php echo $usernameColor; ?>; font-weight: bold;"><?php echo htmlspecialchars($username); ?></span>✨</span>
             <a href="logout.php" class="btn btn-small">Logout</a>
         </div>
     </nav>
@@ -99,6 +99,12 @@ $success = $_GET['success'] ?? '';
                 </div>
                 
                 <div class="card option-card">
+                    <h2>🎅Story Mode🎄</h2>
+                    <p>Experience a Christmas adventure!</p>
+                    <a href="story.php" class="btn btn-primary btn-large" style="text-decoration: none;">Play Story</a>
+                </div>
+                
+                <div class="card option-card">
                     <h2>👨‍👩‍👧‍👦Quick Match👨‍👩‍👧‍👦</h2>
                     <p>Race against another player!</p>
                     <a href="quick_match.php" class="btn btn-primary btn-large" style="text-decoration: none;">Find Match</a>
@@ -132,33 +138,6 @@ $success = $_GET['success'] ?? '';
         } else {
             Lobby.initLobby();
         }
-
-        //Theme Switching via JavaScript
-        function updateActiveButton(theme) {
-            document.querySelectorAll('.theme-options button').forEach(btn => {
-                btn.classList.toggle('active', btn.getAttribute('data-theme') === theme);
-            });
-        }
-
-        document.querySelectorAll('.theme-options button').forEach(btn => {
-            btn.addEventListener('click', () => {
-                const selectedTheme = btn.getAttribute('data-theme');
-
-                // Remove previous used theme classes
-                document.body.classList.remove('theme-classic', 'theme-snowy', 'theme-candycane');
-
-                // Apply selected theme to lobby
-                document.body.classList.add(selectedTheme);
-
-                // Save preference in localStorage
-                localStorage.setItem('selectedTheme', selectedTheme);
-            });
-        });
-
-        // Apply saved theme on page load
-        const savedTheme = localStorage.getItem('selectedTheme') || 'theme-classic';
-        document.body.classList.add(savedTheme);
-        updateActiveButton(savedTheme);
     </script>
     <script src="assets/js/theme.js"></script>
 </body>
